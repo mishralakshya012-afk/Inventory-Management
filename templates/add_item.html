@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Item</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <h1>Add Item</h1>
+</header>
+
+<div class="item-form">
+    <form method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name" required>
+
+        <label for="category">Category</label>
+        <input type="text" name="category">
+
+        <label for="quantity">Quantity</label>
+        <input type="number" name="quantity" required>
+
+        <label for="price">Price</label>
+        <input type="number" step="0.01" name="price" required>
+
+        <button type="submit">Add Item</button>
+    </form>
+</div>
+
+<footer>&copy; 2025 Inventory Management System</footer>
+</body>
+</html>

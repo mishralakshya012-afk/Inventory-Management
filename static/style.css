@@ -1,0 +1,255 @@
+/* =======================================================
+   GLOBAL STYLES (base styles applied everywhere)
+======================================================= */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #092635;
+    color: #9EC8B9;
+}
+header, footer {
+    background: #1B4242;
+    color: #9EC8B9;
+    text-align: center;
+    padding: 1rem;
+}
+nav a {
+    color: #9EC8B9;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: 500;
+}
+nav a:hover {
+    text-decoration: underline;
+}
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 2rem auto;
+}
+
+/* Generic button */
+.button {
+    justify-content: center;
+    background: #5C8374;
+    color: #092635;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid #9EC8B9;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    transition: background 0.3s;
+}
+.button:hover {
+    background: #1B4242;
+    color: #9EC8B9;
+}
+
+/* =======================================================
+   HOME PAGE
+======================================================= */
+.home-container {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+.home-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+.home-container p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: #9EC8B9;
+}
+.home-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.home-buttons a {
+    padding: 10px 20px;
+    background: #5C8374;
+    color: #092635;
+    border: 1px solid #9EC8B9;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+    transition: background 0.3s;
+}
+.home-buttons a:hover {
+    background: #1B4242;
+    color: #9EC8B9;
+}
+
+/* =======================================================
+   LOGIN & REGISTER PAGES
+======================================================= */
+.form-card {
+    max-width: 400px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: #1B4242;
+    color: #9EC8B9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.form-card h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+.form-card input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    background: #092635;
+    color: #9EC8B9;
+    border: 1px solid #5C8374;
+    border-radius: 6px;
+}
+.form-card input:focus {
+    border-color: #9EC8B9;
+    outline: none;
+}
+.form-card button {
+    width: 100%;
+    padding: 12px;
+    background: #5C8374;
+    color: #092635;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+.form-card button:hover {
+    background: #1B4242;
+    color: #9EC8B9;
+}
+/* flash messages inside forms */
+.flash {
+    background: #ffdddd;
+    color: #d8000c;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.form-footer {
+    margin-top: 15px;
+    font-size: 0.9em;
+    text-align: center;
+}
+.form-footer a {
+    color: #9EC8B9;
+    font-weight: bold;
+    text-decoration: none;
+}
+.form-footer a:hover {
+    color: #5C8374;
+    text-decoration: underline;
+}
+
+/* =======================================================
+   DASHBOARD PAGE
+======================================================= */
+.filter-bar {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.filter-bar input,
+.filter-bar select,
+.filter-bar button {
+    padding: 8px 12px;
+    border: 1px solid #9EC8B9;
+    border-radius: 6px;
+    background: #092635;
+    color: #9EC8B9;
+}
+.filter-bar button,
+.filter-bar .add-item-btn {
+    background: #5C8374;
+    color: #092635;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.filter-bar button:hover,
+.filter-bar .add-item-btn:hover {
+    background: #1B4242;
+    color: #9EC8B9;
+}
+
+#itemsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+#itemsTable th, #itemsTable td {
+    border: 1px solid #5C8374;
+    padding: 10px;
+    text-align: center;
+}
+#itemsTable th {
+    background: #1B4242;
+    color: #9EC8B9;
+}
+#itemsTable td {
+    background: #092635;
+    color: #9EC8B9;
+}
+#itemsTable tr:nth-child(even) td {
+    background: #1B4242;
+}
+
+/* =======================================================
+   ADD / UPDATE ITEM FORMS
+======================================================= */
+.item-form {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #1B4242;
+    color: #9EC8B9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.item-form label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+.item-form input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background: #092635;
+    color: #9EC8B9;
+    border: 1px solid #5C8374;
+    border-radius: 6px;
+}
+.item-form input:focus {
+    border-color: #9EC8B9;
+    outline: none;
+}
+.item-form button {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 12px;
+    background: #5C8374;
+    color: #092635;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.item-form button:hover {
+    background: #1B4242;
+    color: #9EC8B9;
+}
