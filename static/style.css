@@ -253,3 +253,8 @@ nav a:hover {
     background: #1B4242;
     color: #9EC8B9;
 }
+.about-logo img {
+    max-width: 200px;
+    margin: 20px auto;
+    display: block;
+}
