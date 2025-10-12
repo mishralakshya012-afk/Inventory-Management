@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Your Cart</h1>
+    <a href="{{ url_for('dashboard') }}" class="ims-btn small">⬅ Back</a>
+  </header>
+
+  <div class="container">
+    {% if cart_items %}
+    <table class="item-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Item Name</th>
+          <th>Quantity</th>
+          <th>Price (₹)</th>
+          <th>Total (₹)</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_items %}
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>
+            <a href="{{ url_for('update_cart', item_id=item.id, action='decrease') }}" class="qty-btn">➖</a>
+            {{ item.quantity }}
+            <a href="{{ url_for('update_cart', item_id=item.id, action='increase') }}" class="qty-btn">➕</a>
+          </td>
+          <td>{{ "%.2f"|format(item.price) }}</td>
+          <td>{{ "%.2f"|format(item.price * item.quantity) }}</td>
+          <td>
+            <a href="{{ url_for('remove_from_cart', item_id=item.id) }}" class="table-btn delete">Remove</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h3 style="text-align:right; margin-top:20px;">Grand Total: ₹{{ "%.2f"|format(total) }}</h3>
+
+    <!-- ✅ Generate Bill Button -->
+    <div style="text-align:right; margin-top:20px;">
+      <a href="{{ url_for('generate_bill') }}" class="ims-btn bill-btn">🧾 Generate Bill</a>
+    </div>
+
+    {% else %}
+      <p style="text-align:center;">🛒 Your cart is empty!</p>
+    {% endif %}
+  </div>
+</body>
+</html>
