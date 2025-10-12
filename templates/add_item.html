@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Add Item</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>Add Item | IMS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-<header class="main-header">
-    <div class="header-left">
-    {% if request.endpoint != 'about' %}
-      <img src="{{ url_for('static', filename='images/ims_logo.png') }}" alt="IMS Logo" class="header-logo">
-    {% endif %}
-    <h1>Add Item</h1>
-  </div>
-</header>
+<body class="form-page">
+  <header class="main-header">
+    <h1>Add New Item</h1>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="IMS Logo" class="logo">
+  </header>
 
-<div class="item-form">
-    <form method="POST">
-        <label for="name">Name</label>
-        <input type="text" name="name" required>
+  <main class="form-container">
+    <form method="POST" class="item-form">
+      <h2>Add Item Details</h2>
 
-        <label for="category">Category</label>
-        <input type="text" name="category">
+      <label>Item Name</label>
+      <input type="text" name="name" placeholder="Enter item name" required>
 
-        <label for="quantity">Quantity</label>
-        <input type="number" name="quantity" required>
+      <label>Quantity</label>
+      <input type="number" name="quantity" placeholder="Enter quantity" required>
 
-        <label for="price">Price</label>
-        <input type="number" step="0.01" name="price" required>
+      <label>Category</label>
+      <input type="text" name="category" placeholder="Enter category" required>
 
-        <button type="submit">Add Item</button>
+      <label>Price (₹)</label>
+      <input type="number" name="price" step="0.01" placeholder="Enter price" required>
+
+      <button type="submit" class="btn-primary">Add Item</button>
     </form>
-</div>
 
-<footer>&copy; 2025 Inventory Management System</footer>
+    <div class="back-link">
+      <a href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+    </div>
+  </main>
 </body>
 </html>

@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Home - Inventory Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>Home | IMS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-<header class="main-header">
-    <div class="header-left">
-    {% if request.endpoint != 'about' %}
-      <img src="{{ url_for('static', filename='images/ims_logo.png') }}" alt="IMS Logo" class="header-logo">
-    {% endif %}
-    <h1>Inventory Management System</h1>
-  </div>
-</header>
+<body class="home-page">
 
-<div class="container home-container">
-    <h2>Welcome!</h2>
-    <p>Use this system to manage your items, track stock levels, and organize inventory efficiently.</p>
+  <div class="home-container">
+    <div class="home-card">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="IMS Logo" class="home-logo">
+      
+      <h1>Inventory Management System</h1>
+      <p class="home-text">
+        Welcome to IMS — your one-stop solution for organizing, tracking, and managing inventory efficiently.
+        Simplify your workflow with real-time tracking, filtering, and more!
+      </p>
 
-    <div class="home-buttons">
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
+      <div class="button-group">
+        <a href="{{ url_for('login') }}" class="ims-btn">Login</a>
+        <a href="{{ url_for('register') }}" class="ims-btn">Register</a>
+      </div>
     </div>
-</div>
+  </div>
+
 </body>
 </html>

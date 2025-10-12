@@ -1,366 +1,531 @@
-/* =======================================================
-   GLOBAL STYLES (base styles applied everywhere)
-======================================================= */
+/* =============================
+   GLOBAL STYLES
+============================= */
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #092635;
-    color: #9EC8B9;
-}
-header, footer {
-    background: #1B4242;
-    color: #9EC8B9;
-    text-align: center;
-    padding: 1rem;
-}
-nav a {
-    color: #9EC8B9;
-    margin: 0 10px;
-    text-decoration: none;
-    font-weight: 500;
-}
-nav a:hover {
-    text-decoration: underline;
-}
-.container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 2rem auto;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #f4f6fc;
+  color: #333;
 }
 
-/* Generic button */
-.button {
-    justify-content: center;
-    background: #5C8374;
-    color: #092635;
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: 1px solid #9EC8B9;
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
-    display: inline-block;
-    text-align: center;
-    transition: background 0.3s;
-}
-.button:hover {
-    background: #1B4242;
-    color: #9EC8B9;
+a {
+  text-decoration: none;
+  color: #001f3f;
 }
 
-/* =======================================================
-   HOME PAGE
-======================================================= */
-.home-container {
-    text-align: center;
-    padding: 4rem 2rem;
-}
-.home-container h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-.home-container p {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    color: #9EC8B9;
-}
-.home-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-.home-buttons a {
-    padding: 10px 20px;
-    background: #5C8374;
-    color: #092635;
-    border: 1px solid #9EC8B9;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 1rem;
-    display: inline-block;
-    transition: background 0.3s;
-}
-.home-buttons a:hover {
-    background: #1B4242;
-    color: #9EC8B9;
+a:hover {
+  text-decoration: underline;
 }
 
-/* =======================================================
-   LOGIN & REGISTER PAGES
-======================================================= */
-.form-card {
-    max-width: 400px;
-    margin: 3rem auto;
-    padding: 2rem;
-    background: #1B4242;
-    color: #9EC8B9;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-.form-card h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-.form-card input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    background: #092635;
-    color: #9EC8B9;
-    border: 1px solid #5C8374;
-    border-radius: 6px;
-}
-.form-card input:focus {
-    border-color: #9EC8B9;
-    outline: none;
-}
-.form-card button {
-    width: 100%;
-    padding: 12px;
-    background: #5C8374;
-    color: #092635;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 1rem;
-}
-.form-card button:hover {
-    background: #1B4242;
-    color: #9EC8B9;
-}
-/* flash messages inside forms */
-.flash {
-    background: #ffdddd;
-    color: #d8000c;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 0.9rem;
-}
-.form-footer {
-    margin-top: 15px;
-    font-size: 0.9em;
-    text-align: center;
-}
-.form-footer a {
-    color: #9EC8B9;
-    font-weight: bold;
-    text-decoration: none;
-}
-.form-footer a:hover {
-    color: #5C8374;
-    text-decoration: underline;
+/* =============================
+   HEADER
+============================= */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #001f3f;
+  color: white;
+  padding: 12px 30px;
 }
 
-/* =======================================================
-   DASHBOARD PAGE
-======================================================= */
-.filter-bar {
-    margin-bottom: 15px;
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.filter-bar input,
-.filter-bar select,
-.filter-bar button {
-    padding: 8px 12px;
-    border: 1px solid #9EC8B9;
-    border-radius: 6px;
-    background: #092635;
-    color: #9EC8B9;
-}
-.filter-bar button,
-.filter-bar .add-item-btn {
-    background: #5C8374;
-    color: #092635;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-.filter-bar button:hover,
-.filter-bar .add-item-btn:hover {
-    background: #1B4242;
-    color: #9EC8B9;
+header img {
+  height: 40px;
 }
 
-#itemsTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-#itemsTable th, #itemsTable td {
-    border: 1px solid #5C8374;
-    padding: 10px;
-    text-align: center;
-}
-#itemsTable th {
-    background: #1B4242;
-    color: #9EC8B9;
-}
-#itemsTable td {
-    background: #092635;
-    color: #9EC8B9;
-}
-#itemsTable tr:nth-child(even) td {
-    background: #1B4242;
+header h1 {
+  margin: 0;
+  font-size: 1.6em;
 }
 
-/* =======================================================
-   ADD / UPDATE ITEM FORMS
-======================================================= */
+/* =============================
+   CONTAINER / FORM CARDS
+============================= */
+.container,
+.form-container {
+  width: 90%;
+  max-width: 900px;
+  margin: 40px auto;
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* =============================
+   FORM ELEMENTS
+============================= */
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #001f3f;
+}
+
+button {
+  background-color: #001f3f;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #004080;
+}
+
+/* =============================
+   ITEM CARD (Dashboard)
+============================= */
+.item-list {
+  margin-top: 20px;
+}
+
+.item-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  align-items: center;
+  background-color: #eef3fb;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.item-card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.item-card p {
+  margin: 2px 0;
+  font-size: 14px;
+}
+
+.item-card a {
+  display: inline-block;
+  text-align: center;
+  padding: 5px 8px;
+  margin: 0 2px;
+  border-radius: 5px;
+  color: white;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.item-card .btn-edit {
+  background-color: #28a745;
+}
+
+.item-card .btn-edit:hover {
+  background-color: #218838;
+}
+
+.item-card .btn-delete {
+  background-color: #dc3545;
+}
+
+.item-card .btn-delete:hover {
+  background-color: #c82333;
+}
+
+/* =============================
+   FILTER / SEARCH FORM
+============================= */
+.filter-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* =============================
+   ADD / UPDATE ITEM FORM PAGE
+============================= */
+.form-page {
+  background-color: #f8f9ff;
+}
+
 .item-form {
-    max-width: 500px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: #1B4242;
-    color: #9EC8B9;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  background-color: white;
+  padding: 40px 50px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: left;
+  margin: 0 auto;
 }
+
+.item-form h2 {
+  text-align: center;
+  color: #001f3f;
+  margin-bottom: 25px;
+}
+
 .item-form label {
-    display: block;
-    margin-top: 1rem;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #001f3f;
 }
-.item-form input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    background: #092635;
-    color: #9EC8B9;
-    border: 1px solid #5C8374;
-    border-radius: 6px;
+
+.btn-primary {
+   display: inline-block;
+  background-color: #f35c4c;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
-.item-form input:focus {
-    border-color: #9EC8B9;
-    outline: none;
+
+.btn-primary:hover {
+  background-color: #004080;
 }
-.item-form button {
-    margin-top: 1.5rem;
-    width: 100%;
-    padding: 12px;
-    background: #5C8374;
-    color: #092635;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
+
+.back-link {
+  margin-top: 15px;
+  text-align: center;
 }
-.item-form button:hover {
-    background: #1B4242;
-    color: #9EC8B9;
+
+.back-link a {
+  color: #001f3f;
+  font-weight: 600;
 }
-.about-logo img {
-    max-width: 200px;
-    margin: 20px auto;
-    display: block;
+
+.back-link a:hover {
+  text-decoration: underline;
 }
+/* =============================
+   ABOUT PAGE STYLING
+============================= */
+
 .about-page {
+  background-color: #4a4a4a;
+  color: #dcdcdc;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  margin: 0;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #001A6E, #074799, #009990, #E1FFBB);
-  background-size: 300% 300%;
-  animation: gradientBG 10s ease infinite;
-  margin: 0;
+}
+
+.about-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
 .about-logo {
-  position: relative;
+  width: 300px;
+  height: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.about-text h1 {
+  color: #cfcfcf;
+  font-weight: 700;
+  font-size: 1.6em;
+  margin-bottom: 5px;
+}
+
+.about-text .tagline {
+  color: #e8d3c2;
+  font-style: italic;
+  font-size: 1em;
+}
+
+.about-description {
+  margin-top: 30px;
+  font-size: 1em;
+  color: #cfcfcf;
+}
+
+.about-description p {
+  margin: 5px 0;
+}
+
+/* Get Started Button */
+.about-button {
+  margin-top: 25px;
+}
+
+.get-started-btn {
   display: inline-block;
+  background-color: #f35c4c;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 
-.about-logo img {
-  width: 500px;   /* adjust to your image size */
-  max-width: 90%;
-  border-radius: 12px;
-  box-shadow: 0px 6px 18px rgba(0,0,0,0.4);
+.get-started-btn:hover {
+  background-color: #ff725f;
+}
+/* =============================
+   HOME PAGE STYLING
+============================= */
+
+.home-page {
+  background: linear-gradient(135deg, #4e56c0, #9b5de0, #d78fee, #fdcffa);
+  background-size: 300% 300%;
+  animation: gradientBG 8s ease infinite;
+  font-family: 'Poppins', sans-serif;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Clickable area only on Get Started text */
-.get-started-link {
-  position: absolute;
-  bottom: 20px;    /* adjust to match "Get Started" text position */
-  right: 40px;     /* adjust horizontally */
-  width: 150px;    /* width covering the text */
-  height: 40px;    /* height covering the text */
-  cursor: pointer;
-}
-.get-started-link:hover {
-  background: rgba(255,255,255,0.1); /* optional highlight */
-}
-
-/* Animated background */
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-.main-header {
+
+.home-container {
   display: flex;
-  justify-content: space-between; /* nav left, logo right */
+  justify-content: center;
   align-items: center;
-  background: #333;
-  padding: 12px 20px;
+  width: 100%;
 }
 
-.nav-links {
-  list-style: none;
+.home-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
+  padding: 40px 50px;
+  max-width: 450px;
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.home-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.home-card h1 {
+  font-size: 1.5em;
+  color: #4e56c0;
+  margin-bottom: 10px;
+}
+
+.home-text {
+  color: #555;
+  font-size: 0.95em;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.button-group {
   display: flex;
+  justify-content: center;
   gap: 20px;
-  margin: 0;
-  padding: 0;
 }
 
-.nav-links a {
+.home-btn {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 25px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  background-color: #4e56c0;
+}
+
+.login-btn:hover {
+  background-color: #3c44a6;
+}
+
+.register-btn {
+  background-color: #9b5de0;
+}
+
+.register-btn:hover {
+  background-color: #7e42c4;
+}
+/* =============================
+   DASHBOARD PAGE STYLING
+============================= */
+
+.dashboard-page {
+  background-color: #f4f6fc;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ---------- Filters Section ---------- */
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filters input,
+.filters select,
+.filters a {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.ims-btn.small {
+  background-color: #4e56c0;
   color: white;
   text-decoration: none;
-  font-weight: 500;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.header-logo {
-  height: 40px; /* adjust size */
-  width: auto;
+.ims-btn.small:hover {
+  background-color: #3b47a3;
 }
-.main-header {
+
+.reset-btn {
+  background-color: #d9534f;
+}
+
+.reset-btn:hover {
+  background-color: #c9302c;
+}
+
+/* ---------- Table Section ---------- */
+.item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 15px;
+  text-align: center;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Add vertical and horizontal lines */
+.item-table th,
+.item-table td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+}
+
+/* Header styling */
+.item-table th {
+  background-color: #4e56c0;
+  color: white;
+  font-weight: 600;
+}
+
+/* Hover effect for better UX */
+.item-table tr:hover {
+  background-color: #f2f5ff;
+}
+
+/* Action buttons */
+.table-btn {
+  padding: 6px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.table-btn.edit {
+  background-color: #4e56c0;
+}
+
+.table-btn.edit:hover {
+  background-color: #3a46a1;
+}
+
+.table-btn.delete {
+  background-color: #e74c3c;
+}
+
+.table-btn.delete:hover {
+  background-color: #c0392b;
+}
+.filters {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  background: #333;
-  padding: 12px 20px;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+/* Adjust filter input & dropdown sizes */
+.filters input[type="text"],
+.filters select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Reset and Add buttons */
+#resetBtn, .ims-btn.small {
+  background-color: #4e56c0;
   color: white;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* space between logo and heading */
-}
-
-.header-left h1 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.header-logo {
-  height: 40px; /* adjust size */
-  width: auto;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-links a {
-  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+#resetBtn:hover,
+.ims-btn.small:hover {
+  background-color: #3a46a1;
+}
+.table-btn.cart {
+  background-color: #9b5de0;
+}
+
+.table-btn.cart:hover {
+  background-color: #8246c9;
 }

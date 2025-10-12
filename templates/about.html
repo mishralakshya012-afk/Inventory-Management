@@ -2,18 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - IMS</title>
+  <title>About | IMS</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="about-page">
+  <div class="about-container">
+    
+    <!-- Logo & Title -->
+    <div class="about-content">
+      <img src="{{ url_for('static', filename='ims_logo.png') }}" alt="IMS Logo" class="about-logo">
+      
+      <div class="about-text">
+        <h1><strong>INVENTORY MANAGEMENT SYSTEM</strong></h1>
+        <p class="tagline">"Organize Today, Scale Tomorrow"</p>
+      </div>
+    </div>
 
-  <div class="about-logo">
-    <img src="{{ url_for('static', filename='images/ims.png') }}" alt="IMS Logo">
+    <!-- Description -->
+    <div class="about-description">
+      <p>Welcome to our Inventory Management System.</p>
+      <p>Keep track of your inventory efficiently with search, category filtering, sorting, and more!</p>
+    </div>
 
-    <!-- Transparent clickable area over "Get Started" -->
-    <a href="{{ url_for('home') }}" class="get-started-link"></a>
+    <!-- Get Started Button -->
+    <div class="about-button">
+      <a href="{{ url_for('home') }}" class="get-started-btn">Get Started</a>
+    </div>
+
   </div>
-
 </body>
 </html>

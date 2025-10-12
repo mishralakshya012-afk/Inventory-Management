@@ -1,51 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Inventory Management System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
-    <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IMS Logo">
-        </div>
-        <nav>
-            <a href="{{ url_for('dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('add_item') }}">Add Item</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-    </header>
+<body class="dashboard-page">
 
-    <main>
-        <h2>Dashboard</h2>
+  <header>
+    <h1>Dashboard</h1>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+    <a href="{{ url_for('cart') }}" class="ims-btn small">🛒 Cart</a>
+  </header>
 
-        <form method="get" action="{{ url_for('dashboard') }}" class="filter-form">
-            <select name="category" onchange="this.form.submit()">
-                <option value="All" {% if selected_category == 'All' %}selected{% endif %}>All Categories</option>
-                {% for category in categories %}
-                    <option value="{{ category.category }}" {% if selected_category == category.category %}selected{% endif %}>{{ category.category }}</option>
-                {% endfor %}
-            </select>
+  <div class="container">
+    <!-- ✅ FILTER FORM -->
+    <form method="get" action="{{ url_for('dashboard') }}" class="filters" id="filterForm">
+  <input 
+    type="text" 
+    name="search" 
+    placeholder="🔍 Search item..." 
+    value="{{ search_query }}"
+    oninput="document.getElementById('filterForm').submit()"
+  >
 
-            <input type="text" name="search" placeholder="Search items..." value="{{ search_query }}">
-            <button type="submit">Search</button>
-        </form>
+  <select name="category" onchange="document.getElementById('filterForm').submit()">
+    <option value="All" {% if selected_category == 'All' %}selected{% endif %}>All Categories</option>
+    {% for category in categories %}
+      <option value="{{ category['category'] }}" {% if selected_category == category['category'] %}selected{% endif %}>
+        {{ category['category'] }}
+      </option>
+    {% endfor %}
+  </select>
 
-        <div class="item-list">
-            {% for item in items %}
-            <div class="item-card">
-                <h3>{{ item.name }}</h3>
-                <p>Category: {{ item.category }}</p>
-                <p>Quantity: {{ item.quantity }}</p>
-                <p>Price: ₹{{ item.price }}</p>
-                <a href="{{ url_for('update_item', item_id=item.id) }}" class="btn-edit">Edit</a>
-                <a href="{{ url_for('delete_item', item_id=item.id) }}" class="btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
-            </div>
-            {% else %}
-            <p>No items found.</p>
-            {% endfor %}
-        </div>
-    </main>
+  <select name="sort_by" onchange="document.getElementById('filterForm').submit()">
+    <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Sort by Name</option>
+    <option value="price" {% if sort_by == 'price' %}selected{% endif %}>Sort by Price</option>
+    <option value="quantity" {% if sort_by == 'quantity' %}selected{% endif %}>Sort by Quantity</option>
+    <option value="category" {% if sort_by == 'category' %}selected{% endif %}>Sort by Category</option>
+  </select>
+
+  <!-- ✅ Reset button replaces Filter -->
+  <a href="{{ url_for('dashboard') }}" class="ims-btn small reset-btn">Reset</a>
+
+  <a href="{{ url_for('add_item') }}" class="ims-btn small">+ Add Item</a>
+</form>
+
+    <!-- ✅ TABLE -->
+    <table class="item-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Price (₹)</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ "%.2f"|format(item.price) }}</td>
+          <td>
+            <a href="{{ url_for('update_item', item_id=item.id) }}" class="table-btn edit">Edit</a>
+            <a href="{{ url_for('delete_item', item_id=item.id) }}" class="table-btn delete" onclick="return confirm('Are you sure?')">Delete</a>
+            <a href="{{ url_for('add_to_cart', item_id=item.id) }}" class="table-btn cart">🛒 Add</a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;">No items found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
 </body>
 </html>
