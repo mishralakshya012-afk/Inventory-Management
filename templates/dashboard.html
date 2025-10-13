@@ -40,7 +40,7 @@
     <option value="category" {% if sort_by == 'category' %}selected{% endif %}>Sort by Category</option>
   </select>
 
-  <!-- ✅ Reset button replaces Filter -->
+  <!-- ✅ Reset button -->
   <a href="{{ url_for('dashboard') }}" class="ims-btn small reset-btn">Reset</a>
 
   <a href="{{ url_for('add_item') }}" class="ims-btn small">+ Add Item</a>
@@ -81,3 +81,4 @@
 
 </body>
 </html>
+
