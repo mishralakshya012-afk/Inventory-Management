@@ -317,6 +317,18 @@ def generate_bill():
     cart = session['cart']
     total = sum(item['price'] * item['quantity'] for item in cart.values())
 
+    # Deduct purchased quantity from inventory
+    with get_db_connection() as conn:
+        for item_id_str, cart_item in cart.items():
+            conn.execute(
+                'UPDATE items SET quantity = quantity - ? WHERE id = ?',
+                (cart_item['quantity'], cart_item['id'])
+            )
+        conn.commit()
+
+    # Clear cart after generating bill
+    session['cart'] = {}
+
     return render_template('bill.html', cart_items=cart.values(), total=total)
 
 # -------- Main --------
