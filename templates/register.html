@@ -9,29 +9,67 @@
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
   <div class="card p-4 shadow-lg border-0" style="width: 400px;" data-aos="zoom-in">
+    <!-- Logo and Title -->
     <div class="text-center mb-3">
       <img src="{{ url_for('static', filename='images/ims_logo.png') }}" height="60" alt="IMS Pro">
-      <h3 class="fw-bold mt-2 text-dark">Register</h3>
+      <h3 class="fw-bold mt-2 text-dark">Create Account</h3>
     </div>
+
+    <!-- Register Form -->
     <form method="POST" action="{{ url_for('register') }}">
+    
       <div class="mb-3">
-        <label class="form-label">Username</label>
-        <input type="text" name="username" class="form-control" required>
+        <label class="form-label"><i class="fa-solid fa-user me-1 text-warning"></i> Username</label>
+        <input type="text" name="username" class="form-control" placeholder="Enter username" required>
       </div>
+
+      <!-- Email -->
       <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control" required>
+        <label class="form-label"><i class="fa-solid fa-envelope me-1 text-warning"></i> Email</label>
+        <input type="email" name="email" class="form-control" placeholder="Enter email address" required>
       </div>
-      <button type="submit" class="btn btn-warning w-100 fw-bold">Register</button>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-lock me-1 text-warning"></i> Password</label>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label class="form-label"><i class="fa-solid fa-lock me-1 text-warning"></i> Confirm Password</label>
+        <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Re-enter password" required>
+      </div>
+
+      <!-- Register Button -->
+      <button type="submit" class="btn btn-warning w-100 fw-bold mt-2">Register</button>
     </form>
-    <p class="text-center mt-3 mb-0 text-muted">Already have an account? 
+
+    <!-- Login Redirect -->
+    <p class="text-center mt-3 mb-0 text-muted">
+      Already have an account? 
       <a href="{{ url_for('login') }}" class="text-warning fw-semibold">Login</a>
     </p>
   </div>
+
+  <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>AOS.init();</script>
+  <script>
+    AOS.init();
+    
+    // Simple client-side password check
+    document.querySelector("form").addEventListener("submit", function(e) {
+      const pwd = document.getElementById("password").value;
+      const confirmPwd = document.getElementById("confirm_password").value;
+      if (pwd !== confirmPwd) {
+        e.preventDefault();
+        alert("Passwords do not match. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>
