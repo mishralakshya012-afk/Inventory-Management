@@ -31,9 +31,9 @@ def init_db():
 
     # ---------- SAMPLE USERS ----------
     users = [
-        ('admin', 'admin@example.com', generate_password_hash('admin123')),
-        ('user1', 'user1@example.com', generate_password_hash('password1')),
-        ('manager', 'manager@example.com', generate_password_hash('manager123'))
+        ('admin', 'admin@.com', generate_password_hash('admin123')),
+        ('user1', 'user1@.com', generate_password_hash('password1')),
+        ('manager', 'manager@.com', generate_password_hash('manager123'))
     ]
 
     for username, email, password in users:
@@ -72,3 +72,4 @@ def init_db():
 
 if __name__ == '__main__':
     init_db()
+
