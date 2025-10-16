@@ -1,26 +1,21 @@
-import sqlite3
-from werkzeug.security import generate_password_hash
-
-DATABASE = 'inventory.db'
-
+from app import get_db_connection
+from werkzeug.security import generate_password_hash, check_password_hash
 def init_db():
-    """Initialize database with required tables and sample data."""
-    conn = sqlite3.connect(DATABASE)
-    c = conn.cursor()
+    with get_db_connection() as conn:
+        c = conn.cursor()
 
-    # ---------- USERS TABLE ----------
-    c.execute('''
+        # USERS TABLE
+        c.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            role TEXT DEFAULT 'user'
+            password TEXT NOT NULL
         )
-    ''')
+        ''')
 
-    # ---------- ITEMS TABLE ----------
-    c.execute('''
+        # ITEMS TABLE
+        c.execute('''
         CREATE TABLE IF NOT EXISTS items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -28,19 +23,32 @@ def init_db():
             category TEXT NOT NULL,
             price REAL DEFAULT 0
         )
-    ''')
+        ''')
 
-    # ---------- BILLS TABLE ----------
-    c.execute('''
+        # BILLS TABLE
+        c.execute('''
         CREATE TABLE IF NOT EXISTS bills (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            total_amount REAL NOT NULL,
-            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            items TEXT NOT NULL,
+            user_id INTEGER,
+            date TEXT,
+            items TEXT,
+            total_amount REAL DEFAULT 0,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
-    ''')
+        ''')
+
+        # BILL_ITEMS TABLE
+        c.execute('''
+        CREATE TABLE IF NOT EXISTS bill_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bill_id INTEGER,
+            item_name TEXT,
+            quantity INTEGER,
+            price REAL,
+            FOREIGN KEY (bill_id) REFERENCES bills(id)
+        )
+        ''')
+
 
     # ---------- SAMPLE USERS ----------
     users = [
@@ -92,3 +100,4 @@ def init_db():
 
 if __name__ == '__main__':
     init_db()
+
