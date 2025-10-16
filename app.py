@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 app = Flask(__name__)
-
 app.secret_key = 'your_secret_key'
 DATABASE = 'inventory.db'
 
@@ -34,27 +34,44 @@ def init_db():
                         category TEXT NOT NULL,
                         price REAL DEFAULT 0
                     )''')
+
+        # Bills table
+        c.execute('''CREATE TABLE IF NOT EXISTS bills (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER,
+                        total REAL,
+                        date TEXT,
+                        FOREIGN KEY (user_id) REFERENCES users(id)
+                    )''')
+
+        # Bill items table
+        c.execute('''CREATE TABLE IF NOT EXISTS bill_items (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        bill_id INTEGER,
+                        item_name TEXT,
+                        quantity INTEGER,
+                        price REAL,
+                        FOREIGN KEY (bill_id) REFERENCES bills(id)
+                    )''')
+
         conn.commit()
 
 
 # ---------------- Routes ----------------
 @app.route('/')
 def about():
-    """Landing page"""
     return render_template('about.html')
 
 
 @app.route('/home')
 def home():
-    """Home page"""
     return render_template('index.html')
 
 
 # -------- Register --------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    session.clear()  # Clear any existing session
-
+    session.clear()
     if request.method == 'POST':
         username = request.form['username'].strip()
         email = request.form['email'].strip()
@@ -101,6 +118,13 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
+
+            # Mark admin
+            if username.lower() == 'admin':
+                session['is_admin'] = True
+            else:
+                session['is_admin'] = False
+
             flash(f'👋 Welcome back, {user["username"]}!')
             return redirect(url_for('dashboard'))
         else:
@@ -231,13 +255,14 @@ def delete_item(item_id):
     flash('🗑️ Item deleted successfully!')
     return redirect(url_for('dashboard'))
 
+
+# -------- Cart Management --------
 @app.route('/add_to_cart/<int:item_id>')
 def add_to_cart(item_id):
     if 'user_id' not in session:
         flash('Please login first!')
         return redirect(url_for('login'))
 
-    # Initialize cart if not exists
     if 'cart' not in session:
         session['cart'] = {}
 
@@ -252,7 +277,6 @@ def add_to_cart(item_id):
     cart = session['cart']
     item_id_str = str(item_id)
 
-    # Add only once by default
     if item_id_str not in cart:
         cart[item_id_str] = {
             'id': item['id'],
@@ -267,6 +291,7 @@ def add_to_cart(item_id):
     session['cart'] = cart
     return redirect(url_for('dashboard'))
 
+
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
     if 'cart' not in session or not session['cart']:
@@ -276,6 +301,7 @@ def cart():
     total = sum(item['price'] * item['quantity'] for item in cart_items)
 
     return render_template('cart.html', cart_items=cart_items, total=total)
+
 
 @app.route('/update_cart/<int:item_id>/<action>')
 def update_cart(item_id, action):
@@ -297,6 +323,7 @@ def update_cart(item_id, action):
 
     return redirect(url_for('cart'))
 
+
 @app.route('/remove_from_cart/<int:item_id>')
 def remove_from_cart(item_id):
     if 'cart' in session:
@@ -308,6 +335,8 @@ def remove_from_cart(item_id):
             flash('Item removed from cart!')
     return redirect(url_for('cart'))
 
+
+# -------- Generate Bill --------
 @app.route('/generate_bill')
 def generate_bill():
     if 'cart' not in session or not session['cart']:
@@ -316,20 +345,49 @@ def generate_bill():
 
     cart = session['cart']
     total = sum(item['price'] * item['quantity'] for item in cart.values())
+    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Deduct purchased quantity from inventory
     with get_db_connection() as conn:
-        for item_id_str, cart_item in cart.items():
-            conn.execute(
-                'UPDATE items SET quantity = quantity - ? WHERE id = ?',
-                (cart_item['quantity'], cart_item['id'])
-            )
+        c = conn.cursor()
+        c.execute('INSERT INTO bills (user_id, total, date) VALUES (?, ?, ?)',
+                  (session['user_id'], total, date))
+        bill_id = c.lastrowid
+
+        for item in cart.values():
+            c.execute('INSERT INTO bill_items (bill_id, item_name, quantity, price) VALUES (?, ?, ?, ?)',
+                      (bill_id, item['name'], item['quantity'], item['price']))
+            c.execute('UPDATE items SET quantity = quantity - ? WHERE id = ?',
+                      (item['quantity'], item['id']))
+
         conn.commit()
 
-    # Clear cart after generating bill
     session['cart'] = {}
-
+    flash('✅ Bill generated successfully!')
     return render_template('bill.html', cart_items=cart.values(), total=total)
+
+
+# -------- Admin View (Secure) --------
+@app.route('/admin/view_database')
+def view_database():
+    if not session.get('is_admin'):
+        flash('Access denied! Admins only.')
+        return redirect(url_for('dashboard'))
+
+    conn = get_db_connection()
+    users = conn.execute("SELECT * FROM users").fetchall()
+    items = conn.execute("SELECT * FROM items").fetchall()
+    bills = conn.execute("SELECT * FROM bills").fetchall()
+    bill_items = conn.execute("SELECT * FROM bill_items").fetchall()
+    conn.close()
+
+    return render_template(
+        'view_database.html',
+        users=users,
+        items=items,
+        bills=bills,
+        bill_items=bill_items
+    )
+
 
 # -------- Main --------
 if __name__ == '__main__':
