@@ -105,7 +105,6 @@ def register():
     return render_template('register.html')
 
 
-# -------- Login --------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -115,26 +114,26 @@ def login():
         with get_db_connection() as conn:
             user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
 
-       if user and check_password_hash(user['password'], password):
-    session['user_id'] = user['id']
-    session['username'] = user['username']
+        if user and check_password_hash(user['password'], password):
+            session['user_id'] = user['id']
+            session['username'] = user['username']
 
-    # Mark admin
-    if username.lower() == 'admin':
-        session['is_admin'] = True
-        flash(f'👋 Welcome back, Admin!')
-        return redirect(url_for('view_database'))  # <-- redirect admin to admin page
-    else:
-        session['is_admin'] = False
-        flash(f'👋 Welcome back, {user["username"]}!')
-        return redirect(url_for('dashboard'))
+            # Mark admin
+            if username.lower() == 'admin':
+                session['is_admin'] = True
+                flash(f'👋 Welcome back, Admin!')
+                return redirect(url_for('view_database'))  # <-- admin goes to database view
+            else:
+                session['is_admin'] = False
+                flash(f'👋 Welcome back, {user["username"]}!')
+                return redirect(url_for('dashboard'))
 
         else:
             flash('❌ Invalid username or password!')
             return redirect(url_for('login'))
 
     return render_template('login.html')
-
+    
 
 # -------- Logout --------
 @app.route('/logout')
