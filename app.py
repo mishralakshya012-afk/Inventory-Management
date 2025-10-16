@@ -50,16 +50,14 @@ def init_db():
             pass  # Column already exists
 
         # ---------- BILL ITEMS TABLE ----------
-        c.execute('''CREATE TABLE IF NOT EXISTS bill_items (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        bill_id INTEGER,
-                        item_name TEXT,
-                        quantity INTEGER,
-                        price REAL,
-                        FOREIGN KEY (bill_id) REFERENCES bills(id)
-                    )''')
-
-        conn.commit()
+        c.execute('''CREATE TABLE IF NOT EXISTS bills (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                total_amount REAL DEFAULT 0,
+                date TEXT,
+                items TEXT,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )''')
 
 # ---------------- Routes ----------------
 @app.route('/')
