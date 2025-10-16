@@ -13,12 +13,12 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-
 # ---------------- Initialize ----------------
 def init_db():
     with get_db_connection() as conn:
         c = conn.cursor()
-        # Users table
+
+        # ---------- USERS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE NOT NULL,
@@ -26,7 +26,7 @@ def init_db():
                         password TEXT NOT NULL
                     )''')
 
-        # Items table
+        # ---------- ITEMS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS items (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL,
@@ -35,16 +35,21 @@ def init_db():
                         price REAL DEFAULT 0
                     )''')
 
-        # Bills table
+        # ---------- BILLS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS bills (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,
-                        total REAL,
                         date TEXT,
                         FOREIGN KEY (user_id) REFERENCES users(id)
                     )''')
 
-        # Bill items table
+        # Add missing 'total' column if not exists
+        try:
+            c.execute("ALTER TABLE bills ADD COLUMN total REAL")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
+        # ---------- BILL ITEMS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS bill_items (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         bill_id INTEGER,
@@ -56,17 +61,14 @@ def init_db():
 
         conn.commit()
 
-
 # ---------------- Routes ----------------
 @app.route('/')
 def about():
     return render_template('about.html')
 
-
 @app.route('/home')
 def home():
     return render_template('index.html')
-
 
 # -------- Register --------
 @app.route('/register', methods=['GET', 'POST'])
@@ -104,7 +106,7 @@ def register():
 
     return render_template('register.html')
 
-
+# -------- Login --------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -118,11 +120,11 @@ def login():
             session['user_id'] = user['id']
             session['username'] = user['username']
 
-            # Mark admin
+            # Admin check
             if username.lower() == 'admin':
                 session['is_admin'] = True
                 flash(f'👋 Welcome back, Admin!')
-                return redirect(url_for('view_database'))  # <-- admin goes to database view
+                return redirect(url_for('view_database'))
             else:
                 session['is_admin'] = False
                 flash(f'👋 Welcome back, {user["username"]}!')
@@ -133,7 +135,6 @@ def login():
             return redirect(url_for('login'))
 
     return render_template('login.html')
-    
 
 # -------- Logout --------
 @app.route('/logout')
@@ -141,7 +142,6 @@ def logout():
     session.clear()
     flash('✅ Logged out successfully!')
     return redirect(url_for('login'))
-
 
 # -------- Dashboard --------
 @app.route('/dashboard')
@@ -186,7 +186,6 @@ def dashboard():
         sort_by=sort_by
     )
 
-
 # -------- Add Item --------
 @app.route('/add_item', methods=['GET', 'POST'])
 def add_item():
@@ -210,7 +209,6 @@ def add_item():
         return redirect(url_for('dashboard'))
 
     return render_template('add_item.html')
-
 
 # -------- Update Item --------
 @app.route('/update_item/<int:item_id>', methods=['GET', 'POST'])
@@ -242,7 +240,6 @@ def update_item(item_id):
 
     return render_template('update_item.html', item=item)
 
-
 # -------- Delete Item --------
 @app.route('/delete_item/<int:item_id>')
 def delete_item(item_id):
@@ -255,7 +252,6 @@ def delete_item(item_id):
 
     flash('🗑️ Item deleted successfully!')
     return redirect(url_for('dashboard'))
-
 
 # -------- Cart Management --------
 @app.route('/add_to_cart/<int:item_id>')
@@ -292,7 +288,6 @@ def add_to_cart(item_id):
     session['cart'] = cart
     return redirect(url_for('dashboard'))
 
-
 @app.route('/cart', methods=['GET', 'POST'])
 def cart():
     if 'cart' not in session or not session['cart']:
@@ -302,7 +297,6 @@ def cart():
     total = sum(item['price'] * item['quantity'] for item in cart_items)
 
     return render_template('cart.html', cart_items=cart_items, total=total)
-
 
 @app.route('/update_cart/<int:item_id>/<action>')
 def update_cart(item_id, action):
@@ -324,7 +318,6 @@ def update_cart(item_id, action):
 
     return redirect(url_for('cart'))
 
-
 @app.route('/remove_from_cart/<int:item_id>')
 def remove_from_cart(item_id):
     if 'cart' in session:
@@ -336,8 +329,6 @@ def remove_from_cart(item_id):
             flash('Item removed from cart!')
     return redirect(url_for('cart'))
 
-
-# -------- Generate Bill --------
 @app.route('/generate_bill')
 def generate_bill():
     if 'cart' not in session or not session['cart']:
@@ -345,52 +336,78 @@ def generate_bill():
         return redirect(url_for('cart'))
 
     cart = session['cart']
-    total = sum(item['price'] * item['quantity'] for item in cart.values())
+
+    # --- CALCULATE TOTALS ---
+    subtotal = 0
+    for item in cart.values():
+        item_total = item['price'] * item['quantity']
+        item['total_amount'] = round(item_total, 2)
+        subtotal += item_total
+
+    gst = round(subtotal * 0.18, 2)             # 18% GST
+    grand_total = round(subtotal + gst, 2)
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # --- CREATE ITEMS STRING FOR DATABASE ---
+    items_str = ', '.join(f"{item['name']} x{item['quantity']}" for item in cart.values())
+
+    # --- INSERT BILL INTO DATABASE ---
     with get_db_connection() as conn:
         c = conn.cursor()
-        c.execute('INSERT INTO bills (user_id, total, date) VALUES (?, ?, ?)',
-                  (session['user_id'], total, date))
+        c.execute('''
+            INSERT INTO bills (user_id, total_amount, date, items)
+            VALUES (?, ?, ?, ?)
+        ''', (session['user_id'], grand_total, date, items_str))
         bill_id = c.lastrowid
 
-        for item in cart.values():
-            c.execute('INSERT INTO bill_items (bill_id, item_name, quantity, price) VALUES (?, ?, ?, ?)',
-                      (bill_id, item['name'], item['quantity'], item['price']))
-            c.execute('UPDATE items SET quantity = quantity - ? WHERE id = ?',
-                      (item['quantity'], item['id']))
+        # Deduct stock quantity
+        for item_id_str, item_data in cart.items():
+            c.execute(
+                'UPDATE items SET quantity = quantity - ? WHERE id = ?',
+                (item_data['quantity'], item_data['id'])
+            )
 
         conn.commit()
 
+    # --- CLEAR CART AFTER BILL ---
     session['cart'] = {}
+
     flash('✅ Bill generated successfully!')
-    return render_template('bill.html', cart_items=cart.values(), total=total)
+
+    # --- RENDER BILL PAGE ---
+    return render_template(
+        'bill.html',
+        cart_items=cart.values(),
+        subtotal=round(subtotal, 2),
+        gst=gst,
+        grand_total=grand_total,
+        current_date=date,
+        current_year=datetime.now().year,
+        invoice_id=bill_id
+    )
 
 
-# -------- Admin View (Secure) --------
+# -------- Admin Database View --------
 @app.route('/admin/view_database')
 def view_database():
     if not session.get('is_admin'):
-        flash('Access denied! Admins only.')
+        flash('❌ Access denied! Admins only.')
         return redirect(url_for('dashboard'))
 
-    conn = get_db_connection()
-    users = conn.execute("SELECT * FROM users").fetchall()
-    items = conn.execute("SELECT * FROM items").fetchall()
-    bills = conn.execute("SELECT * FROM bills").fetchall()
-    bill_items = conn.execute("SELECT * FROM bill_items").fetchall()
-    conn.close()
+    with get_db_connection() as conn:
+        users = conn.execute('SELECT * FROM users').fetchall()
+        items = conn.execute('SELECT * FROM items').fetchall()
+        bills = conn.execute('SELECT * FROM bills').fetchall()
+        bill_items = conn.execute('SELECT * FROM bill_items').fetchall()
 
-    return render_template(
-        'view_database.html',
-        users=users,
-        items=items,
-        bills=bills,
-        bill_items=bill_items
-    )
-
+    return render_template('view_database.html',
+                           users=users,
+                           items=items,
+                           bills=bills,
+                           bill_items=bill_items)
 
 # -------- Main --------
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, threaded=True)
+
