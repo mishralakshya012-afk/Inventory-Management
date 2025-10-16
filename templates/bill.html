@@ -3,101 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <title>IMS Pro | Bill</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="bg-light">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light shadow-sm py-3" style="background-color: #f9f9f9;">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-dark" href="{{ url_for('dashboard') }}">
-        <img src="{{ url_for('static', filename='images/ims_logo.png') }}" alt="IMS Pro" height="40" class="me-2">
-        IMS <span class="text-warning">Pro</span>
-      </a>
-      <div class="d-flex">
-        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary me-2">
-          <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-        </a>
-        <a href="{{ url_for('logout') }}" class="btn btn-warning text-white">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </a>
-      </div>
+<div class="container mt-5 mb-5">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header text-center bg-warning text-white py-3">
+      <h3 class="mb-0 fw-bold">Customer Bill</h3>
     </div>
-  </nav>
+    <div class="card-body p-5">
 
-  <!-- Bill Section -->
-  <div class="container mt-5 mb-5" data-aos="fade-up">
-    <div class="card shadow-lg border-0 rounded-4">
-      <div class="card-header text-center bg-warning text-white rounded-top-4 py-3">
-        <h3 class="mb-0 fw-bold"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Customer Bill</h3>
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5>Invoice Date:</h5>
+          <p>{{ current_date }}</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <h5>Invoice ID:</h5>
+          <p>#{{ invoice_id }}</p>
+        </div>
       </div>
-      <div class="card-body p-5">
 
-        <div class="row mb-4">
-          <div class="col-md-6">
-            <h5 class="fw-bold">Invoice Date:</h5>
-            <p>{{ current_date }}</p>
-          </div>
-          <div class="col-md-6 text-end">
-            <h5 class="fw-bold">Invoice ID:</h5>
-            <p>#{{ invoice_id }}</p>
-          </div>
-        </div>
-
-        <div class="table-responsive mb-4">
-          <table class="table table-striped align-middle">
-            <thead class="table-dark text-center">
-              <tr>
-                <th>Item Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Price (₹)</th>
-                <th>Total (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in cart_items %}
-              <tr class="text-center">
-                <td>{{ item['name'] }}</td>
-                <td>{{ item['category'] }}</td>
-                <td>{{ item['quantity'] }}</td>
-                <td>{{ item['price'] }}</td>
-                <td>{{ item['total'] }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-        <div class="text-end mb-4">
-          <h5 class="fw-bold text-secondary">Subtotal: ₹{{ subtotal }}</h5>
-          <h5 class="fw-bold text-secondary">GST (18%): ₹{{ gst }}</h5>
-          <h4 class="fw-bold text-dark mt-2">Grand Total: <span class="text-warning">₹{{ grand_total }}</span></h4>
-        </div>
-
-        <div class="d-flex justify-content-between mt-4">
-          <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary px-4">
-            <i class="fa-solid fa-arrow-left"></i> Back to Cart
-          </a>
-          <button onclick="window.print()" class="btn btn-warning text-white px-4 fw-bold">
-            <i class="fa-solid fa-print me-1"></i> Generate Bill
-          </button>
-        </div>
-
+      <div class="table-responsive mb-4">
+        <table class="table table-striped align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th>Item Name</th>
+              <th>Quantity</th>
+              <th>Price (₹)</th>
+              <th>Total Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart_items %}
+            <tr class="text-center">
+              <td>{{ item['name'] }}</td>
+              <td>{{ item['quantity'] }}</td>
+              <td>{{ item['price'] }}</td>
+              <td>{{ item['total_amount'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
+
+      <div class="text-end mb-4">
+        <h5>Subtotal: ₹{{ subtotal }}</h5>
+        <h5>GST (18%): ₹{{ gst }}</h5>
+        <h4 class="mt-2">Grand Total: <span class="text-warning">₹{{ grand_total }}</span></h4>
+      </div>
+
+      <div class="d-flex justify-content-between mt-4">
+        <a href="{{ url_for('cart') }}" class="btn btn-outline-secondary px-4">Back to Cart</a>
+        <button onclick="window.print()" class="btn btn-warning text-white px-4 fw-bold">Print Bill</button>
+      </div>
+
     </div>
   </div>
+</div>
 
-  <footer class="text-center mt-5 mb-3 text-muted small">
-    &copy; {{ current_year }} IMS Pro — Professional Inventory Management
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script>AOS.init();</script>
 </body>
 </html>
