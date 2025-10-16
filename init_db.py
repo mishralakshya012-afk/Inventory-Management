@@ -14,7 +14,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            role TEXT DEFAULT 'user'
         )
     ''')
 
@@ -29,19 +30,31 @@ def init_db():
         )
     ''')
 
+    # ---------- BILLS TABLE ----------
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS bills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            total_amount REAL NOT NULL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            items TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+
     # ---------- SAMPLE USERS ----------
     users = [
-        ('admin', 'admin@.com', generate_password_hash('admin123')),
-        ('user1', 'user1@.com', generate_password_hash('password1')),
-        ('manager', 'manager@.com', generate_password_hash('manager123'))
+        ('admin', 'admin@example.com', generate_password_hash('admin123'), 'admin'),
+        ('user1', 'user1@example.com', generate_password_hash('password1'), 'user'),
+        ('manager', 'manager@example.com', generate_password_hash('manager123'), 'user')
     ]
 
-    for username, email, password in users:
+    for username, email, password, role in users:
         c.execute('SELECT * FROM users WHERE username = ? OR email = ?', (username, email))
         if not c.fetchone():
             c.execute(
-                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-                (username, email, password)
+                'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
+                (username, email, password, role)
             )
 
     # ---------- SAMPLE ITEMS ----------
@@ -64,12 +77,18 @@ def init_db():
                 (name, quantity, category, price)
             )
 
+    # ---------- SAMPLE BILL ----------
+    c.execute('SELECT * FROM bills')
+    if not c.fetchone():
+        c.execute('''
+            INSERT INTO bills (user_id, total_amount, items)
+            VALUES (?, ?, ?)
+        ''', (1, 1200.00, 'Bag x1, Pen x3'))
+
     conn.commit()
     conn.close()
 
-    print("✅ Database initialized successfully with sample data!")
-
+    print("✅ Database initialized successfully with sample data (users, items, bills)!")
 
 if __name__ == '__main__':
     init_db()
-
