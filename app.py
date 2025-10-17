@@ -25,12 +25,10 @@ def init_db():
                         email TEXT UNIQUE NOT NULL,
                         password TEXT NOT NULL
                     )''')
-
-        # Add missing 'role' column
         try:
             c.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
         except sqlite3.OperationalError:
-            pass  # Column already exists
+            pass
 
         # ---------- ITEMS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS items (
@@ -46,30 +44,23 @@ def init_db():
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,
                         date TEXT,
+                        total_amount REAL DEFAULT 0,
+                        items TEXT,
                         FOREIGN KEY (user_id) REFERENCES users(id)
                     )''')
 
-        # Add missing 'total_amount' and 'items' columns
-        try:
-            c.execute("ALTER TABLE bills ADD COLUMN total_amount REAL DEFAULT 0")
-        except sqlite3.OperationalError:
-            pass
-        try:
-            c.execute("ALTER TABLE bills ADD COLUMN items TEXT")
-        except sqlite3.OperationalError:
-            pass
-
         # ---------- BILL ITEMS TABLE ----------
-        c.execute('''CREATE TABLE IF NOT EXISTS bills (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER,
-                total_amount REAL DEFAULT 0,
-                date TEXT,
-                items TEXT,
-                FOREIGN KEY (user_id) REFERENCES users(id)
-            )''')
+        c.execute('''CREATE TABLE IF NOT EXISTS bill_items (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        bill_id INTEGER,
+                        item_name TEXT,
+                        quantity INTEGER,
+                        price REAL,
+                        FOREIGN KEY (bill_id) REFERENCES bills(id)
+                    )''')
 
         conn.commit()
+
 
 # ---------------- Routes ----------------
 @app.route('/')
