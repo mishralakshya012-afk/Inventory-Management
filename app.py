@@ -26,12 +26,18 @@ def init_db():
                         password TEXT NOT NULL
                     )''')
 
+        # Add missing 'role' column
+        try:
+            c.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+
         # ---------- ITEMS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS items (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL,
                         quantity INTEGER NOT NULL,
-                        category TEXT NOT NULL,
+                        category TEXT,
                         price REAL DEFAULT 0
                     )''')
 
@@ -43,11 +49,15 @@ def init_db():
                         FOREIGN KEY (user_id) REFERENCES users(id)
                     )''')
 
-        # Add missing 'total' column if not exists
+        # Add missing 'total_amount' and 'items' columns
         try:
-            c.execute("ALTER TABLE bills ADD COLUMN total REAL")
+            c.execute("ALTER TABLE bills ADD COLUMN total_amount REAL DEFAULT 0")
         except sqlite3.OperationalError:
-            pass  # Column already exists
+            pass
+        try:
+            c.execute("ALTER TABLE bills ADD COLUMN items TEXT")
+        except sqlite3.OperationalError:
+            pass
 
         # ---------- BILL ITEMS TABLE ----------
         c.execute('''CREATE TABLE IF NOT EXISTS bills (
@@ -58,6 +68,8 @@ def init_db():
                 items TEXT,
                 FOREIGN KEY (user_id) REFERENCES users(id)
             )''')
+
+        conn.commit()
 
 # ---------------- Routes ----------------
 @app.route('/')
@@ -342,7 +354,7 @@ def generate_bill():
         item['total_amount'] = round(item_total, 2)
         subtotal += item_total
 
-    gst = round(subtotal * 0.18, 2)             # 18% GST
+    gst = round(subtotal * 0.18, 2)  # 18% GST
     grand_total = round(subtotal + gst, 2)
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -352,13 +364,22 @@ def generate_bill():
     # --- INSERT BILL INTO DATABASE ---
     with get_db_connection() as conn:
         c = conn.cursor()
+
+        # Insert the main bill
         c.execute('''
             INSERT INTO bills (user_id, total_amount, date, items)
             VALUES (?, ?, ?, ?)
         ''', (session['user_id'], grand_total, date, items_str))
         bill_id = c.lastrowid
 
-        # Deduct stock quantity
+        # ✅ Insert each cart item into bill_items table
+        for item in cart.values():
+            c.execute('''
+                INSERT INTO bill_items (bill_id, item_name, quantity, price)
+                VALUES (?, ?, ?, ?)
+            ''', (bill_id, item['name'], item['quantity'], item['price']))
+
+        # ✅ Deduct stock quantity
         for item_id_str, item_data in cart.items():
             c.execute(
                 'UPDATE items SET quantity = quantity - ? WHERE id = ?',
