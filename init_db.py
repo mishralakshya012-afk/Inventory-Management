@@ -4,67 +4,84 @@ import sqlite3
 from datetime import datetime
 
 def init_db():
+    # Establish connection to the database
     conn = get_db_connection()
     c = conn.cursor()
 
-    # ---------- USERS TABLE ----------
-    c.execute('''CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE NOT NULL,
-                    email TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL
-                )''')
+    # ---------------- USERS TABLE ----------------
+    # Create users table if it does not exist
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
 
-    # Add missing 'role' column
+    # Add the 'role' column if it is missing
     try:
         c.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'")
     except sqlite3.OperationalError:
-        pass  # Already exists
+        # Column already exists
+        pass
 
-    # ---------- ITEMS TABLE ----------
-    c.execute('''CREATE TABLE IF NOT EXISTS items (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    quantity INTEGER NOT NULL,
-                    category TEXT,
-                    price REAL DEFAULT 0
-                )''')
+    # ---------------- ITEMS TABLE ----------------
+    # Create items table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            quantity INTEGER NOT NULL,
+            category TEXT,
+            price REAL DEFAULT 0
+        )
+    ''')
 
-    # ---------- BILLS TABLE ----------
-    c.execute('''CREATE TABLE IF NOT EXISTS bills (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    user_id INTEGER,
-                    date TEXT,
-                    FOREIGN KEY (user_id) REFERENCES users(id)
-                )''')
+    # ---------------- BILLS TABLE ----------------
+    # Create bills table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS bills (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            date TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
 
-    # Add missing columns safely
-    for col_def in [
+    # Add missing columns safely (total_amount, items)
+    for column_name, column_type in [
         ("total_amount", "REAL DEFAULT 0"),
         ("items", "TEXT")
     ]:
         try:
-            c.execute(f"ALTER TABLE bills ADD COLUMN {col_def[0]} {col_def[1]}")
+            c.execute(f"ALTER TABLE bills ADD COLUMN {column_name} {column_type}")
         except sqlite3.OperationalError:
+            # Column already exists
             pass
 
-    # ---------- BILL ITEMS TABLE ----------
-    c.execute('''CREATE TABLE IF NOT EXISTS bill_items (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    bill_id INTEGER,
-                    item_name TEXT,
-                    quantity INTEGER,
-                    price REAL,
-                    FOREIGN KEY (bill_id) REFERENCES bills(id)
-                )''')
+    # ---------------- BILL ITEMS TABLE ----------------
+    # Create bill_items table
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS bill_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bill_id INTEGER,
+            item_name TEXT,
+            quantity INTEGER,
+            price REAL,
+            FOREIGN KEY (bill_id) REFERENCES bills(id)
+        )
+    ''')
 
-    # ---------- SAMPLE USERS ----------
+    # ---------------- SAMPLE USERS ----------------
+    # Define some initial users
     users = [
         ('admin', 'admin@example.com', generate_password_hash('admin123'), 'admin'),
         ('user1', 'user1@example.com', generate_password_hash('password1'), 'user'),
         ('manager', 'manager@example.com', generate_password_hash('manager123'), 'user')
     ]
 
+    # Insert sample users if they do not already exist
     for username, email, password, role in users:
         c.execute('SELECT * FROM users WHERE username = ? OR email = ?', (username, email))
         if not c.fetchone():
@@ -73,7 +90,8 @@ def init_db():
                 (username, email, password, role)
             )
 
-    # ---------- SAMPLE ITEMS ----------
+    # ---------------- SAMPLE ITEMS ----------------
+    # Define initial items
     items = [
         ('Laptop', 10, 'Electronics', 55000.00),
         ('Mouse', 50, 'Electronics', 499.00),
@@ -85,6 +103,7 @@ def init_db():
         ('Bag', 15, 'Accessories', 1200.00)
     ]
 
+    # Insert sample items if they do not exist
     for name, quantity, category, price in items:
         c.execute('SELECT * FROM items WHERE name = ?', (name,))
         if not c.fetchone():
@@ -93,7 +112,8 @@ def init_db():
                 (name, quantity, category, price)
             )
 
-    # ---------- SAMPLE BILL ----------
+    # ---------------- SAMPLE BILL ----------------
+    # Insert a sample bill if no bills exist
     c.execute('SELECT * FROM bills')
     if not c.fetchone():
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -103,7 +123,7 @@ def init_db():
         ''', (1, 1230.00, 'Bag x1, Pen x3', date))
         bill_id = c.lastrowid
 
-        # ---------- SAMPLE BILL ITEMS ----------
+        # ---------------- SAMPLE BILL ITEMS ----------------
         bill_items = [
             (bill_id, 'Bag', 1, 1200.00),
             (bill_id, 'Pen', 3, 10.00)
@@ -113,9 +133,11 @@ def init_db():
             bill_items
         )
 
+    # Commit all changes and close the connection
     conn.commit()
     conn.close()
-    print("✅ Database initialized successfully with sample data (users, items, bills, bill_items)!")
+    print("✅ Database initialized successfully with all tables and sample data!")
 
+# ---------------- RUN INITIALIZATION ----------------
 if __name__ == '__main__':
     init_db()
